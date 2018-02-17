@@ -964,15 +964,17 @@ archinstallgrub(){
   if [ "$efimode" == "1" ]||[ "$efimode" == "2" ]; then
     if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" 0 0) then
       clear
-      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi"
-      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi
+      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi networkmanager"
+      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi networkmanager
+      sync
       pressanykey
     fi
   else
     if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" --defaultno 0 0) then
       clear
-      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi"
-      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi
+      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi networkmanager"
+      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi networkmanager
+      sync
       pressanykey
     fi
   fi
@@ -1050,12 +1052,18 @@ archinstallbootloaderefichroot(){
   if [ ! "$1" = "none" ]; then
     echo "grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1"
     grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1
-    mkdir -p /mnt/boot/EFI/Boot/
-    cp /mnt/usr/share/refind/refind_x64.efi /mnt/boot/EFI/Boot/bootx64.efi
-    cp -r /mnt/usr/share/refind/drivers_x64/ /mnt/boot/EFI/Boot/
+    mkdir -p /boot/EFI/Boot/
+    cp /usr/share/refind/refind_x64.efi /boot/EFI/Boot/bootx64.efi
+    cp -r /usr/share/refind/drivers_x64/ /boot/EFI/Boot/
     # https://www.rodsbooks.com/refind/configfile.html
-    echo 'extra_kernel_version_strings linux-git,linux-lts,linux;' > /mnt/boot/EFI/Boot/refind.conf
-    echo 'timeout 4;' >> /mnt/boot/EFI/Boot/refind.conf
+    echo 'extra_kernel_version_strings linux-git,linux-lts,linux;' > /boot/EFI/Boot/refind.conf
+    echo 'timeout 4;' >> /boot/EFI/Boot/refind.conf
+#    In case not in chroot:
+#    cp /mnt/usr/share/refind/refind_x64.efi /mnt/boot/EFI/Boot/bootx64.efi
+#    cp -r /mnt/usr/share/refind/drivers_x64/ /mnt/boot/EFI/Boot/
+#    # https://www.rodsbooks.com/refind/configfile.html
+#    echo 'extra_kernel_version_strings linux-git,linux-lts,linux;' > /mnt/boot/EFI/Boot/refind.conf
+#    echo 'timeout 4;' >> /mnt/boot/EFI/Boot/refind.conf
   fi
   exit
 }
