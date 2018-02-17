@@ -251,7 +251,7 @@ diskpartautoefi(){
     if (whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt,efi)" --yesno "${txtautopartsconfirm//%1/$device}" --defaultno 0 0) then
       clear
       echo "$txtautopartclear"
-      echo "Clearing questions: Contains old stuff continue ?)"
+      echo "Clearing questions: Contains old stuff continue ?"
       echo ""
       echo "dd if=/dev/zero of=$device"1" bs=1M count=8"
       dd if=/dev/zero of=$device"1" bs=1M count=8
@@ -275,7 +275,7 @@ diskpartautoefi(){
       echo ""
       pressanykey
       bootdev=$device"1"
-      rootdev=$device"2"
+      rootdev=$device"4"
       efimode="1"
     fi
   fi
