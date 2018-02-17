@@ -964,19 +964,17 @@ archinstallgrub(){
   if [ "$efimode" == "1" ]||[ "$efimode" == "2" ]; then
     if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" 0 0) then
       clear
-      echo "pacstrap /mnt efibootmgr"
-      pacstrap /mnt efibootmgr
+      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi"
+      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi
       pressanykey
     fi
   else
     if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" --defaultno 0 0) then
       clear
-      echo "pacstrap /mnt efibootmgr"
-      pacstrap /mnt efibootmgr
+      echo "pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi"
+      pacstrap /mnt efibootmgr dialog wpa_supplicant refind-efi
       pressanykey
     fi
-  echo "pacstrap /mnt dialog wpa_supplicant refind-efi"
-  pacstrap /mnt dialog wpa_supplicant refind-efi
   fi
   
   if [ "$luksroot" = "1" ]; then
