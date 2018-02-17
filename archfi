@@ -1013,15 +1013,9 @@ archinstallbootloader(){
       if [ "$efimode" = "1" ]; then
         options+=("EFI" "")
         options+=("BIOS" "")
-        options+=("BIOS+EFI" "")
-      elif [ "$efimode" = "2" ]; then
-        options+=("BIOS+EFI" "")
-        options+=("BIOS" "")
-        options+=("EFI" "")
       else
         options+=("BIOS" "")
         options+=("EFI" "")
-        options+=("BIOS+EFI" "")
       fi
       sel=$(whiptail --backtitle "$apptitle" --title "${txtinstall//%1/bootloader}" --menu "" --cancel-button "$txtback" 0 0 0 \
         "${options[@]}" \
