@@ -1031,7 +1031,6 @@ archinstallbootloader(){
         case $sel in
           "BIOS") archchroot installbootloader $device;;
           "EFI") archchroot installbootloaderefi $device;;
-          "BIOS+EFI") archchroot installbootloaderefiusb $device;;
         esac
         pressanykey
       fi
@@ -1054,8 +1053,8 @@ archinstallbootloaderefichroot(){
     echo "grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1"
     grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1
     mkdir -p /mnt/boot/EFI/Boot/
-    cp /usr/share/refind/refind_x64.efi /mnt/boot/EFI/Boot/bootx64.efi
-    cp -r /usr/share/refind/drivers_x64/ /mnt/boot/EFI/Boot/
+    cp /mnt/usr/share/refind/refind_x64.efi /mnt/boot/EFI/Boot/bootx64.efi
+    cp -r /mnt/usr/share/refind/drivers_x64/ /mnt/boot/EFI/Boot/
     # https://www.rodsbooks.com/refind/configfile.html
     echo 'extra_kernel_version_strings linux-git,linux-lts,linux;' > /mnt/boot/EFI/Boot/refind.conf
     echo 'timeout 4;' >> /mnt/boot/EFI/Boot/refind.conf
@@ -1268,7 +1267,6 @@ if [ "$chroot" = "1" ]; then
     'installgrub') archinstallgrubchroot;;
     'installbootloader') archinstallbootloaderchroot $args;;
     'installbootloaderefi') archinstallbootloaderefichroot $args;;
-    'installbootloaderefiusb') archinstallbootloaderefiusbchroot $args;;
     'archdiinstallandlaunch') archdiinstallandlaunchchroot;;
     'archdiinstall') archdiinstallchroot;;
     'archdilaunch') archdilaunchchroot;;
