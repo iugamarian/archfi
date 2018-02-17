@@ -165,15 +165,8 @@ diskpartmenu(){
     nextitem=$1
   fi
   options=()
-  if [ "$eficomputer" == "0" ]; then
-    options+=("$txtautoparts (gpt)" "")
-    options+=("$txtautoparts (dos)" "")
-  else
-    options+=("$txtautoparts (gpt,efi)" "")
-    options+=("$txtautoparts (gpt)" "")
-    options+=("$txtautoparts (dos)" "")
-    options+=("$txtautoparts (gpt,bios+efi,noswap)" "")
-  fi
+  options+=("$txtautoparts (dos)" "")
+  options+=("$txtautoparts (gpt,efi)" "")
   options+=("$txteditparts (cfdisk)" "")
   options+=("$txteditparts (cgdisk)" "")
   sel=$(whiptail --backtitle "$apptitle" --title "$txtdiskpartmenu" --menu "" --cancel-button "$txtback" --default-item "$nextitem" 0 0 0 \
@@ -185,17 +178,9 @@ diskpartmenu(){
         diskpartautodos
         nextitem="$txtautoparts (dos)"
       ;;
-      "$txtautoparts (gpt)")
-        diskpartautogpt
-        nextitem="$txtautoparts (gpt)"
-      ;;
       "$txtautoparts (gpt,efi)")
         diskpartautoefi
         nextitem="$txtautoparts (gpt,efi)"
-      ;;
-      "$txtautoparts (gpt,bios+efi,noswap)")
-        diskpartautoefiusb
-        nextitem="$txtautoparts (gpt,bios+efi,noswap)"
       ;;
       "$txteditparts (cfdisk)")
         diskpartcfdisk
@@ -210,7 +195,6 @@ diskpartmenu(){
   fi
 }
 
-
 diskpartautodos(){
   items=$(lsblk -d -p -n -l -o NAME -e 7,11)
   options=()
@@ -224,15 +208,23 @@ diskpartautodos(){
     if (whiptail --backtitle "$apptitle" --title "$txtautoparts (dos)" --yesno "${txtautopartsconfirm//%1/$device}" --defaultno 0 0) then
       clear
       echo "$txtautopartclear"
+      echo "Clearing questions: Contains old stuff continue ?"
+      echo ""
+      echo "dd if=/dev/zero of=$device"1" bs=1M count=8"
+      dd if=/dev/zero of=$device"1" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"2" bs=1M count=8"
+      dd if=/dev/zero of=$device"2" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"3" bs=1M count=8"
+      dd if=/dev/zero of=$device"3" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"4" bs=1M count=8"
+      dd if=/dev/zero of=$device"4" bs=1M count=8
+      echo "if=/dev/zero of=$device bs=1M count=32"
+      dd if=/dev/zero of=$device bs=1M count=32
+      sleep 1
       parted $device mklabel msdos
       sleep 1
       echo "${txtautopartcreate//%1/boot}"
       echo -e "n\np\n\n\n+512M\na\nw" | fdisk $device
-      sleep 1
-      echo "${txtautopartcreate//%1/swap}"
-      swapsize=$(cat /proc/meminfo | grep MemTotal | awk '{ print $2 }')
-      swapsize=$(($swapsize/1000))"M"
-      echo -e "n\np\n\n\n+$swapsize\nt\n\n82\nw" | fdisk $device
       sleep 1
       echo "${txtautopartcreate//%1/root}"
       echo -e "n\np\n\n\n\nw" | fdisk $device
@@ -240,42 +232,7 @@ diskpartautodos(){
       echo ""
       pressanykey
       bootdev=$device"1"
-      swapdev=$device"2"
-      rootdev=$device"3"
-      efimode="0"
-    fi
-  fi
-}
-
-diskpartautogpt(){
-  items=$(lsblk -d -p -n -l -o NAME -e 7,11)
-  options=()
-  for item in $items; do
-    options+=("$item" "")
-  done
-  device=$(whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt)" --menu "" 0 0 0 \
-    "${options[@]}" \
-    3>&1 1>&2 2>&3)
-  if [ "$?" = "0" ]; then
-    if (whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt)" --yesno "${txtautopartsconfirm//%1/$device}" --defaultno 0 0) then
-      clear
-      echo "$txtautopartclear"
-      parted $device mklabel gpt
-      echo "${txtautopartcreate//%1/BIOS boot}"
-      sgdisk $device -n=1:0:+31M -t=1:ef02
-      echo "${txtautopartcreate//%1/boot}"
-      sgdisk $device -n=2:0:+512M
-      echo "${txtautopartcreate//%1/swap}"
-      swapsize=$(cat /proc/meminfo | grep MemTotal | awk '{ print $2 }')
-      swapsize=$(($swapsize/1000))"M"
-      sgdisk $device -n=3:0:+$swapsize -t=3:8200
-      echo "${txtautopartcreate//%1/root}"
-      sgdisk $device -n=4:0:0
-      echo ""
-      pressanykey
-      bootdev=$device"2"
-      swapdev=$device"3"
-      rootdev=$device"4"
+      rootdev=$device"2"
       efimode="0"
     fi
   fi
@@ -294,53 +251,32 @@ diskpartautoefi(){
     if (whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt,efi)" --yesno "${txtautopartsconfirm//%1/$device}" --defaultno 0 0) then
       clear
       echo "$txtautopartclear"
+      echo "Clearing questions: Contains old stuff continue ?)"
+      echo ""
+      echo "dd if=/dev/zero of=$device"1" bs=1M count=8"
+      dd if=/dev/zero of=$device"1" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"2" bs=1M count=8"
+      dd if=/dev/zero of=$device"2" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"3" bs=1M count=8"
+      dd if=/dev/zero of=$device"3" bs=1M count=8
+      echo "dd if=/dev/zero of=$device"4" bs=1M count=8"
+      dd if=/dev/zero of=$device"4" bs=1M count=8
+      echo "if=/dev/zero of=$device bs=1M count=32"
+      dd if=/dev/zero of=$device bs=1M count=32
+      sleep 1
       parted $device mklabel gpt
+      sleep 1
       echo "${txtautopartcreate//%1/EFI boot}"
-      sgdisk $device -n=1:0:+1024M -t=1:ef00
-      echo "${txtautopartcreate//%1/swap}"
-      swapsize=$(cat /proc/meminfo | grep MemTotal | awk '{ print $2 }')
-      swapsize=$(($swapsize/1000))"M"
-      sgdisk $device -n=3:0:+$swapsize -t=3:8200
+      sgdisk $device -n=1:0:+512M -t=1:ef00
+      sleep 1
       echo "${txtautopartcreate//%1/root}"
       sgdisk $device -n=4:0:0
+      sleep 1
       echo ""
       pressanykey
       bootdev=$device"1"
-      swapdev=$device"3"
-      rootdev=$device"4"
+      rootdev=$device"2"
       efimode="1"
-    fi
-  fi
-}
-
-diskpartautoefiusb(){
-  items=$(lsblk -d -p -n -l -o NAME -e 7,11)
-  options=()
-  for item in $items; do
-    options+=("$item" "")
-  done
-  device=$(whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt,efi)" --menu "" 0 0 0 \
-    "${options[@]}" \
-    3>&1 1>&2 2>&3)
-  if [ "$?" = "0" ]; then
-    if (whiptail --backtitle "$apptitle" --title "$txtautoparts (gpt,efi)" --yesno "${txtautopartsconfirm//%1/$device}" --defaultno 0 0) then
-      clear
-      echo "$txtautopartclear"
-      parted $device mklabel gpt
-      echo "${txtautopartcreate//%1/EFI boot}"
-      sgdisk $device -n=1:0:+1024M -t=1:ef00
-      echo "${txtautopartcreate//%1/BIOS boot}"
-      sgdisk $device -n=3:0:+31M -t=3:ef02
-      echo "${txtautopartcreate//%1/root}"
-      sgdisk $device -n=4:0:0
-      echo "$txthybridpartcreate"
-      echo -e "r\nh\n3\nN\n\nY\nN\nw\nY\n" | gdisk $device
-      echo ""
-      pressanykey
-      bootdev=$device"1"
-      swapdev=
-      rootdev=$device"4"
-      efimode="2"
     fi
   fi
 }
@@ -398,18 +334,6 @@ selectparts(){
     fi
   fi
 
-  swapdev=$(whiptail --backtitle "$apptitle" --title "$txtselectpartsmenu" --menu "${txtselectdevice//%1/swap}" --default-item "$swapdev" 0 0 0 \
-    "none" "-" \
-    "${options[@]}" \
-    3>&1 1>&2 2>&3)
-  if [ ! "$?" = "0" ]; then
-    return 1
-  else
-    if [ "$swapdev" = "none" ]; then
-      swapdev=
-    fi
-  fi
-
   rootdev=$(whiptail --backtitle "$apptitle" --title "$txtselectpartsmenu" --menu "${txtselectdevice//%1/root}" --default-item "$rootdev" 0 0 0 \
     "${options[@]}" \
     3>&1 1>&2 2>&3)
@@ -431,7 +355,6 @@ selectparts(){
 
   msg="$txtselecteddevices\n\n"
   msg=$msg"boot : "$bootdev"\n"
-  msg=$msg"swap : "$swapdev"\n"
   msg=$msg"root : "$rootdev"\n"
   msg=$msg"home : "$homedev"\n\n"
   if (whiptail --backtitle "$apptitle" --title "$txtselectpartsmenu" --yesno "$msg" 0 0) then
@@ -475,9 +398,6 @@ formatdevices(){
   if (whiptail --backtitle "$apptitle" --title "$txtformatdevices" --yesno "$txtformatdeviceconfirm" --defaultno 0 0) then
     if [ ! "$bootdev" = "" ]; then
       formatbootdevice boot $bootdev
-    fi
-    if [ ! "$swapdev" = "" ]; then
-      formatswapdevice
     fi
     formatdevice root $rootdev
     if [ ! "$homedev" = "" ]; then
@@ -523,15 +443,6 @@ formatbootdevice(){
       mkfs.fat $2
     ;;
   esac
-  echo ""
-  pressanykey
-}
-formatswapdevice(){
-  clear
-  echo "${txtformatingpart//%1/$swapdev} swap"
-  echo "----------------------------------------------"
-  echo "mkswap $swapdev"
-  mkswap $swapdev
   echo ""
   pressanykey
 }
@@ -658,10 +569,6 @@ mountparts(){
   if [ ! "$bootdev" = "" ]; then
     echo "mount $bootdev /mnt/boot"
     mount $bootdev /mnt/boot
-  fi
-  if [ ! "$swapdev" = "" ]; then
-    echo "swapon $swapdev"
-    swapon $swapdev
   fi
   if [ ! "$homedev" = "" ]; then
     echo "mount $homedev /mnt/home"
@@ -1053,23 +960,23 @@ archinstallgrub(){
   echo "pacstrap /mnt grub"
   pacstrap /mnt grub
   pressanykey
-  
-  if [ "$eficomputer" == "1" ]; then
-    if [ "$efimode" == "1" ]||[ "$efimode" == "2" ]; then
-      if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" 0 0) then
-        clear
-        echo "pacstrap /mnt efibootmgr"
-        pacstrap /mnt efibootmgr
-        pressanykey
-      fi
-    else
-      if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" --defaultno 0 0) then
-        clear
-        echo "pacstrap /mnt efibootmgr"
-        pacstrap /mnt efibootmgr
-        pressanykey
-      fi
+
+  if [ "$efimode" == "1" ]||[ "$efimode" == "2" ]; then
+    if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" 0 0) then
+      clear
+      echo "pacstrap /mnt efibootmgr"
+      pacstrap /mnt efibootmgr
+      pressanykey
     fi
+  else
+    if (whiptail --backtitle "$apptitle" --title "${txtinstall//%1/efibootmgr}" --yesno "$txtefibootmgr" --defaultno 0 0) then
+      clear
+      echo "pacstrap /mnt efibootmgr"
+      pacstrap /mnt efibootmgr
+      pressanykey
+    fi
+  echo "pacstrap /mnt dialog wpa_supplicant refind-efi"
+  pacstrap /mnt dialog wpa_supplicant refind-efi
   fi
   
   if [ "$luksroot" = "1" ]; then
@@ -1146,15 +1053,12 @@ archinstallbootloaderefichroot(){
   if [ ! "$1" = "none" ]; then
     echo "grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1"
     grub-install --target=x86_64-efi --efi-directory=/boot --recheck $1
-  fi
-  exit
-}
-archinstallbootloaderefiusbchroot(){
-  if [ ! "$1" = "none" ]; then
-    echo "grub-install --target=i386-pc --recheck $1"
-    grub-install --target=i386-pc --recheck $1
-    echo "grub-install --target=x86_64-efi --efi-directory=/boot --removable --recheck $1"
-    grub-install --target=x86_64-efi --efi-directory=/boot --removable --recheck $1
+    mkdir -p /mnt/boot/EFI/Boot/
+    cp /usr/share/refind/refind_x64.efi /mnt/boot/EFI/Boot/bootx64.efi
+    cp -r /usr/share/refind/drivers_x64/ /mnt/boot/EFI/Boot/
+    # https://www.rodsbooks.com/refind/configfile.html
+    echo 'extra_kernel_version_strings linux-git,linux-lts,linux;' > /mnt/boot/EFI/Boot/refind.conf
+    echo 'timeout 4;' >> /mnt/boot/EFI/Boot/refind.conf
   fi
   exit
 }
@@ -1371,13 +1275,8 @@ if [ "$chroot" = "1" ]; then
   esac
 else
   pacman -S --needed arch-install-scripts wget libnewt
-  dmesg |grep efi: > /dev/null
-  if [ "$?" == "1" ]; then
-    eficomputer=0
-  else
-    eficomputer=1
-    efimode=1
-  fi
+  eficomputer=1
+  efimode=1
   loadstrings
   EDITOR=nano
   mainmenu
