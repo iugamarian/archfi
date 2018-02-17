@@ -1,6 +1,6 @@
 # archfi
 
-# Modified to work better with efi autopartitioning and booting (for M.2 SSD)
+# Modified to work better with EFI autopartitioning and booting (for M.2 SSD)
 
 Just a simple bash script wizard to install Arch Linux after you have booted on the official Arch Linux install media.
 
@@ -15,9 +15,9 @@ You can watch MatMoul's videos to see how to use it [here](https://www.youtube.c
 Boot with the Arch Linux image found [here](https://www.archlinux.org/download/).
 
 Download the script with:<br/>
-`mount -o remount,size=2G /run/archiso/cowspace`
-`pacman -Sy git`
-`git clone git://github.com/iugamarian/archfi`
+`mount -o remount,size=2G /run/archiso/cowspace`<br />
+`pacman -Sy git`<br />
+`git clone git://github.com/iugamarian/archfi`<br />
 
 And launch the script with:<br />
 `cd archfi*`<br />
