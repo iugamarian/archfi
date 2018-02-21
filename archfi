@@ -148,6 +148,8 @@ chooseeditor(){
 rebootpc(){
   if (whiptail --backtitle "$apptitle" --title "$txtreboot" --yesno "$txtreboot ?" --defaultno 0 0) then
     clear
+    sync
+    sleep 2
     reboot
   fi
 }
@@ -955,8 +957,14 @@ archgenmkinitcpiochroot(){
 
 archinstallgrub(){
   clear
+  mkdir -p /mnt/etc/sysctl.d
+  echo "vm.dirty_bytes = 134217728" > /etc/sysctl.d/30-savebufferdisk.conf
+  echo "vm.dirty_background_bytes = 134217728" >> /etc/sysctl.d/30-savebufferdisk.conf
+  echo "vm.dirty_writeback_centisecs = 600" >> /etc/sysctl.d/30-savebufferdisk.conf
+  echo "vm.dirty_expire_centisecs = 600" >> /etc/sysctl.d/30-savebufferdisk.conf
   echo "pacstrap /mnt grub"
   pacstrap /mnt grub
+  sync
   pressanykey
 
   if [ "$efimode" == "1" ]||[ "$efimode" == "2" ]; then
