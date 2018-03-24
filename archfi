@@ -999,6 +999,9 @@ archinstallgrub(){
   pressanykey
 }
 archinstallgrubchroot(){
+  echo "Disable ipv6 because DNS lookup hangs"
+  sed -i 's/quiet/quiet ipv6.disable=1/g' /etc/default/grub
+  sync
   echo "grub-mkconfig -o /boot/grub/grub.cfg"
   grub-mkconfig -o /boot/grub/grub.cfg
   exit
