@@ -1001,6 +1001,8 @@ archinstallgrub(){
 archinstallgrubchroot(){
   echo "Disable ipv6 because DNS lookup hangs"
   sed -i 's/quiet/quiet ipv6.disable=1/g' /etc/default/grub
+  echo "Avoid the error: Too many open files."
+  echo "* - nofile 1536" >> /etc/security/limits.conf
   sync
   echo "grub-mkconfig -o /boot/grub/grub.cfg"
   grub-mkconfig -o /boot/grub/grub.cfg
