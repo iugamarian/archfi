@@ -435,8 +435,8 @@ formatbootdevice(){
       mkfs.ext3 $2
     ;;
     ext4)
-      echo "mkfs.ext4 $2"
-      mkfs.ext4 $2
+      echo "mkfs.ext4 -O ^64bit $2"
+      mkfs.ext4 -O ^64bit $2
     ;;
     fat32)
       echo "mkfs.fat $2"
@@ -477,8 +477,8 @@ formatdevice(){
       mkfs.reiserfs -f $2
     ;;
     ext4)
-      echo "mkfs.ext4 $2"
-      mkfs.ext4 $2
+      echo "mkfs.ext4 -O ^64bit $2"
+      mkfs.ext4 -O ^64bit $2
     ;;
     ext3)
       echo "mkfs.ext3 $2"
