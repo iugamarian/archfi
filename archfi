@@ -965,11 +965,14 @@ archinstallgrub(){
   echo "vm.dirty_background_bytes = 134217728" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
   echo "vm.dirty_writeback_centisecs = 600" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
   echo "vm.dirty_expire_centisecs = 600" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
+  # There is protection here to avoid bad rewrites of config files if this function is recalled
   echo "Disable ipv6 to avoid DNS lookup hangs"
-  sed -i 's/quiet/quiet ipv6.disable=1/g' /mnt/etc/default/grub
   echo "Message Signaled Interrupts could hang booting on older 64 bit PC's"
-  sed -i 's/ipv6.disable=1/ipv6.disable=1 pci=nomsi/g' /mnt/etc/default/grub
+  sed -i 's/quiet ipv6.disable=1 pci=nomsi/quiet/g' /mnt/etc/default/grub
+  sed -i 's/quiet/quiet ipv6.disable=1 pci=nomsi/g' /mnt/etc/default/grub
   echo "Avoid the error: Too many open files."
+  mkdir -p /mnt/etc/security
+  sed -i 's/* - nofile 1536//g' /mnt/etc/security/limits.conf
   echo "* - nofile 1536" >> /mnt/etc/security/limits.conf
   sync
   pressanykey
