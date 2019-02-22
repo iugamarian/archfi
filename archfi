@@ -957,13 +957,20 @@ archgenmkinitcpiochroot(){
 
 archinstallgrub(){
   clear
+  echo "pacstrap /mnt grub"
+  pacstrap /mnt grub
+  sync
   mkdir -p /mnt/etc/sysctl.d
   echo "vm.dirty_bytes = 134217728" > /mnt/etc/sysctl.d/30-savebufferdisk.conf
   echo "vm.dirty_background_bytes = 134217728" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
   echo "vm.dirty_writeback_centisecs = 600" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
   echo "vm.dirty_expire_centisecs = 600" >> /mnt/etc/sysctl.d/30-savebufferdisk.conf
-  echo "pacstrap /mnt grub"
-  pacstrap /mnt grub
+  echo "Disable ipv6 to avoid DNS lookup hangs"
+  sed -i 's/quiet/quiet ipv6.disable=1/g' /mnt/etc/default/grub
+  echo "Message Signaled Interrupts could hang booting on older 64 bit PC's"
+  sed -i 's/ipv6.disable=1/ipv6.disable=1 pci=nomsi/g' /mnt/etc/default/grub
+  echo "Avoid the error: Too many open files."
+  echo "* - nofile 1536" >> /mnt/etc/security/limits.conf
   sync
   pressanykey
 
@@ -999,13 +1006,6 @@ archinstallgrub(){
   pressanykey
 }
 archinstallgrubchroot(){
-  echo "Disable ipv6 because DNS lookup hangs"
-  sed -i 's/quiet/quiet ipv6.disable=1/g' /etc/default/grub
-  echo "Message Signaled Interrupts could hang booting on older 64 bit PC's"
-  sed -i 's/ipv6.disable=1/ipv6.disable=1 pci=nomsi/g' /etc/default/grub
-  echo "Avoid the error: Too many open files."
-  echo "* - nofile 1536" >> /etc/security/limits.conf
-  sync
   echo "grub-mkconfig -o /boot/grub/grub.cfg"
   grub-mkconfig -o /boot/grub/grub.cfg
   echo "The file grub.cfg.new could be written instead of grub.cfg !!!"
