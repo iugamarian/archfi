@@ -15,7 +15,7 @@ You can watch MatMoul's videos to see how to use it [here](https://www.youtube.c
 Boot with the Arch Linux image found [here](https://www.archlinux.org/download/).
 
 Download the script with:<br/>
-`mount -o remount,size=2G /run/archiso/cowspace`<br />
+`mount -o remount,size=512M /run/archiso/cowspace`<br />
 `pacman -Sy git`<br />
 `git clone git://github.com/iugamarian/archfi`<br />
 
